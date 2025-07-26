@@ -6,150 +6,248 @@
 /*   By: sergio <sergio@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 21:02:01 by sergio            #+#    #+#             */
-/*   Updated: 2025/07/22 21:14:56 by sergio           ###   ########.fr       */
+/*   Updated: 2025/07/26 20:48:36 by sergio           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Fixed.hpp"
 
-// Orthodox Canonical Form
-Fixed::Fixed() : _rawBits(0) {}
+Fixed::Fixed()
+{
+    std::cout << GREEN << "\t[Default constructor]" << RESET << "\n";
+    _fixedPoint = 0;
+}
 
-Fixed::Fixed(const Fixed& other) { *this = other; }
+Fixed::Fixed(const Fixed& other)
+{
+    std::cout << CYAN << "\t[Copy constructor]" << RESET << "\n";
+    _fixedPoint = other._fixedPoint;
+}
+
+Fixed::Fixed(const int value)
+{
+    std::cout << YELLOW << "\t[Int constructor]" << RESET 
+              << " value=" << value << "\n";
+    _fixedPoint = value << _fractionalBits;
+}
+
+Fixed::Fixed(const float value)
+{
+    std::cout << YELLOW << "\t[Float constructor]" << RESET 
+              << " value=" << value << "\n";
+    _fixedPoint = roundf(value * (1 << _fractionalBits));
+}
 
 Fixed& Fixed::operator=(const Fixed& other)
 {
-	if (this != &other)
-		this->_rawBits = other._rawBits;
-	return *this;
+    std::cout << CYAN << "\t[Copy assignment]" << RESET << "\n";
+    if (this != &other)
+        _fixedPoint = other._fixedPoint;
+    return *this;
 }
 
-Fixed::~Fixed() {}
-
-// Constructores personalizados
-Fixed::Fixed(const int value) 
+Fixed::~Fixed()
 {
-	this->_rawBits = value << _fractionalBits;
+    std::cout << RED << "\t[Destructor]" << RESET << "\n";
 }
 
-Fixed::Fixed(const float value) 
+void Fixed::setRawBits(int const raw)
 {
-	this->_rawBits = roundf(value * (1 << _fractionalBits));
+    _fixedPoint = raw;
+    std::cout << MAGENTA << "\t[setRawBits]" << RESET 
+              << " raw=" << raw << "\n";
 }
 
-// Métodos públicos
-int	Fixed::getRawBits() const { return _rawBits; }
-
-void Fixed::setRawBits(int const raw) { _rawBits = raw; }
-
-float Fixed::toFloat() const 
+int Fixed::getRawBits(void) const
 {
-	return (float)_rawBits / (1 << _fractionalBits);
+    std::cout << MAGENTA << "\t[getRawBits]" << RESET 
+              << " raw=" << _fixedPoint << "\n";
+    return _fixedPoint;
 }
 
-int Fixed::toInt() const 
+int Fixed::toInt(void) const
 {
-	return _rawBits >> _fractionalBits;
+    int val = _fixedPoint >> _fractionalBits;
+    std::cout << MAGENTA << "\t[toInt]" << RESET 
+              << " value=" << val << "\n";
+    return val;
 }
 
-// Comparadores
-bool Fixed::operator>(const Fixed& other) const { return _rawBits > other._rawBits; }
+float Fixed::toFloat(void) const
+{
+    float f = (float)_fixedPoint / (1 << _fractionalBits);
+    std::cout << MAGENTA << "\t[toFloat]" << RESET 
+              << " value=" << f << "\n";
+    return f;
+}
 
-bool Fixed::operator<(const Fixed& other) const { return _rawBits < other._rawBits; }
+std::ostream& operator<<(std::ostream& os, const Fixed& obj)
+{
+    float f = obj.toFloat();
+    std::cout << MAGENTA << "\t[operator<<]" << RESET 
+              << " value=" << f << "\n";
+    os << f;
+    return os;
+}
 
-bool Fixed::operator>=(const Fixed& other) const { return _rawBits >= other._rawBits; }
+bool Fixed::operator>(const Fixed& other) const
+{
+    std::cout << CYAN << "\t[operator>]" << RESET << "\n";
+    return _fixedPoint > other._fixedPoint;
+}
 
-bool Fixed::operator<=(const Fixed& other) const { return _rawBits <= other._rawBits; }
+bool Fixed::operator>=(const Fixed& other) const
+{
+    std::cout << CYAN << "\t[operator>=]" << RESET << "\n";
+    return _fixedPoint >= other._fixedPoint;
+}
 
-bool Fixed::operator==(const Fixed& other) const { return _rawBits == other._rawBits; }
+bool Fixed::operator<(const Fixed& other) const
+{
+    std::cout << CYAN << "\t[operator<]" << RESET << "\n";
+    return _fixedPoint < other._fixedPoint;
+}
 
-bool Fixed::operator!=(const Fixed& other) const { return _rawBits != other._rawBits; }
+bool Fixed::operator<=(const Fixed& other) const
+{
+    std::cout << CYAN << "\t[operator<=]" << RESET << "\n";
+    return _fixedPoint <= other._fixedPoint;
+}
 
-// Operadores aritméticos
+bool Fixed::operator==(const Fixed& other) const
+{
+    std::cout << CYAN << "\t[operator==]" << RESET << "\n";
+    return _fixedPoint == other._fixedPoint;
+}
+
+bool Fixed::operator!=(const Fixed& other) const
+{
+    std::cout << CYAN << "\t[operator!=]" << RESET << "\n";
+    return _fixedPoint != other._fixedPoint;
+}
+
 Fixed Fixed::operator+(const Fixed& other) const
 {
-	return Fixed(this->toFloat() + other.toFloat());
+    Fixed result;
+    int raw = _fixedPoint + other._fixedPoint;
+    std::cout << CYAN << "\t[operator+]" << RESET << "\n";
+    result.setRawBits(raw);
+    return result;
 }
 
 Fixed Fixed::operator-(const Fixed& other) const
 {
-	return Fixed(this->toFloat() - other.toFloat());
+    Fixed result;
+    int raw = _fixedPoint - other._fixedPoint;
+    std::cout << CYAN << "\t[operator-]" << RESET << "\n";
+    result.setRawBits(raw);
+    return result;
 }
 
-Fixed Fixed::operator*(const Fixed& other) const 
+Fixed Fixed::operator*(const Fixed& other) const
 {
-	return Fixed(this->toFloat() * other.toFloat());
+    Fixed result;
+    long tmp = (long)_fixedPoint * (long)other._fixedPoint;
+    int raw = tmp >> _fractionalBits;
+    std::cout << CYAN << "\t[operator*]" << RESET << "\n";
+    result.setRawBits(raw);
+    return result;
 }
 
-Fixed Fixed::operator/(const Fixed& other) const 
+Fixed Fixed::operator/(const Fixed& other) const
 {
-	return Fixed(this->toFloat() / other.toFloat());
+    Fixed result;
+    if (other._fixedPoint == 0)
+    {
+        std::cerr << RED << "\t[operator/] Division by zero!\n" << RESET;
+        result.setRawBits(0);
+        return result;
+    }
+
+    long tmp = ((long)_fixedPoint << _fractionalBits) / other._fixedPoint;
+    std::cout << CYAN << "\t[operator/]" << RESET << "\n";
+    result.setRawBits(tmp);
+    return result;
 }
 
-// Incremento/Decremento
-Fixed& Fixed::operator++() 
+Fixed& Fixed::operator++()
 {
-	_rawBits++;
-	return *this;
+    std::cout << CYAN << "\t[pre-increment]" << RESET << "\n";
+    _fixedPoint += 1;
+    return *this;
 }
 
-Fixed Fixed::operator++(int) 
+Fixed Fixed::operator++(int)
 {
-	Fixed temp = *this;
-	_rawBits++;
-	return temp;
+    std::cout << CYAN << "\t[post-increment]" << RESET << "\n";
+    Fixed temp(*this);
+    _fixedPoint += 1;
+    return temp;
 }
 
-Fixed& Fixed::operator--() 
+Fixed& Fixed::operator--()
 {
-	_rawBits--;
-	return *this;
+    std::cout << CYAN << "\t[pre-decrement]" << RESET << "\n";
+    _fixedPoint -= 1;
+    return *this;
 }
 
 Fixed Fixed::operator--(int)
 {
-	Fixed temp = *this;
-	_rawBits--;
-	return temp;
+    std::cout << CYAN << "\t[post-decrement]" << RESET << "\n";
+    Fixed temp(*this);
+    _fixedPoint -= 1;
+    return temp;
 }
 
-// Min / Max
 Fixed& Fixed::min(Fixed& a, Fixed& b)
 {
-	if (a < b)
-		return a;
-	else
-		return b;
+    std::cout << CYAN << "[min] " << RESET 
+              << "Comparando " << a.toFloat() << " y " << b.toFloat() << "\n";
+    if (a < b)
+    {
+        std::cout << CYAN << "[min] " << RESET << "Devuelve a\n";
+        return a;
+    }
+    std::cout << CYAN << "[min] " << RESET << "Devuelve b\n";
+    return b;
 }
 
 const Fixed& Fixed::min(const Fixed& a, const Fixed& b)
 {
-	if (a < b)
-		return a;
-	else
-		return b;
+    std::cout << CYAN << "[min const] " << RESET 
+              << "Comparando " << a.toFloat() << " y " << b.toFloat() << "\n";
+    if (a < b)
+    {
+        std::cout << CYAN << "[min const] " << RESET << "Devuelve a\n";
+        return a;
+    }
+    std::cout << CYAN << "[min const] " << RESET << "Devuelve b\n";
+    return b;
 }
 
 Fixed& Fixed::max(Fixed& a, Fixed& b)
 {
-	if (a > b)
-		return a;
-	else
-		return b;
+    std::cout << CYAN << "[max] " << RESET 
+              << "Comparando " << a.toFloat() << " y " << b.toFloat() << "\n";
+    if (a > b)
+    {
+        std::cout << CYAN << "[max] " << RESET << "Devuelve a\n";
+        return a;
+    }
+    std::cout << CYAN << "[max] " << RESET << "Devuelve b\n";
+    return b;
 }
 
 const Fixed& Fixed::max(const Fixed& a, const Fixed& b)
 {
-	if (a > b)
-		return a;
-	else
-		return b;
-}
-
-
-// Stream
-std::ostream& operator<<(std::ostream& out, const Fixed& value)
-{
-	out << value.toFloat();
-	return out;
+    std::cout << CYAN << "[max const] " << RESET 
+              << "Comparando " << a.toFloat() << " y " << b.toFloat() << "\n";
+    if (a > b)
+    {
+        std::cout << CYAN << "[max const] " << RESET << "Devuelve a\n";
+        return a;
+    }
+    std::cout << CYAN << "[max const] " << RESET << "Devuelve b\n";
+    return b;
 }
