@@ -6,67 +6,89 @@
 /*   By: sergio <sergio@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 19:48:49 by sergio            #+#    #+#             */
-/*   Updated: 2025/07/22 19:58:12 by sergio           ###   ########.fr       */
+/*   Updated: 2025/07/26 19:01:09 by sergio           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Fixed.hpp"
 
-// Constructores
-Fixed::Fixed() : _value(0) {
-    std::cout << "Default constructor called" << std::endl;
+Fixed::Fixed()
+{
+    std::cout << GREEN << "[Default constructor] " << RESET
+              << "Object at [" << this << "] created, _fixedPoint=0" << std::endl;
+    _fixedPoint = 0;
 }
 
-Fixed::Fixed(const int value) {
-    std::cout << "Int constructor called" << std::endl;
-    _value = value << _fractionalBits;
+Fixed::Fixed(const Fixed& other)
+{
+    std::cout << CYAN << "[Copy constructor] " << RESET
+              << "Object at [" << this << "] copying from [" << &other << "]" << std::endl;
+    this->_fixedPoint = other._fixedPoint;
 }
 
-Fixed::Fixed(const float value) {
-    std::cout << "Float constructor called" << std::endl;
-    _value = roundf(value * (1 << _fractionalBits));
+Fixed::Fixed(const int value)
+{
+    std::cout << YELLOW << "[Int constructor] " << RESET
+              << "Object at [" << this << "], value=" << value << std::endl;
+    _fixedPoint = value << _fractionalBits;
 }
 
-// Constructor de copia
-Fixed::Fixed(const Fixed& other) {
-    std::cout << "Copy constructor called" << std::endl;
-    *this = other;
+Fixed::Fixed(const float value)
+{
+    std::cout << YELLOW << "[Float constructor] " << RESET
+              << "Object at [" << this << "], value=" << value << std::endl;
+    _fixedPoint = roundf(value * (1 << _fractionalBits));
 }
 
-// Operador de asignación
-Fixed& Fixed::operator=(const Fixed& other) {
-    std::cout << "Copy assignment operator called" << std::endl;
+Fixed& Fixed::operator=(const Fixed& other)
+{
+    std::cout << CYAN << "[Copy assignment] " << RESET
+              << "Object at [" << this << "] assigned from [" << &other << "]" << std::endl; 
     if (this != &other)
-        _value = other.getRawBits();
+        this->_fixedPoint = other._fixedPoint;
     return *this;
 }
 
-// Destructor
-Fixed::~Fixed() {
-    std::cout << "Destructor called" << std::endl;
+Fixed::~Fixed()
+{
+    std::cout << RED << "[Destructor] " << RESET
+              << "Object at [" << this << "] destroyed" << std::endl;
 }
 
-// Get/Set
-int Fixed::getRawBits(void) const {
-    return _value;
+void Fixed::setRawBits(int const raw)
+{
+    this->_fixedPoint = raw;
+    std::cout << MAGENTA << "[setRawBits] " << RESET
+              << "Object at [" << this << "], new raw=" << raw << std::endl;
 }
 
-void Fixed::setRawBits(int const raw) {
-    _value = raw;
+int Fixed::getRawBits(void) const
+{
+    std::cout << MAGENTA << "[getRawBits] " << RESET
+              << "Object at [" << this << "], returning raw=" << this->_fixedPoint << std::endl;
+    return this->_fixedPoint;
 }
 
-// Conversión a float
-float Fixed::toFloat(void) const {
-    return static_cast<float>(_value) / (1 << _fractionalBits);
+int Fixed::toInt(void) const
+{
+    std::cout << MAGENTA << "[toInt] " << RESET
+              << "Object at [" << this << "], value=" << (_fixedPoint >> _fractionalBits) << std::endl;
+    return _fixedPoint >> _fractionalBits;
 }
 
-// Conversión a int
-int Fixed::toInt(void) const {
-    return _value >> _fractionalBits;
+float Fixed::toFloat(void) const
+{
+    float f = (float)_fixedPoint / (1 << _fractionalBits);
+    std::cout << MAGENTA << "[toFloat] " << RESET
+              << "Object at [" << this << "], value=" << f << std::endl;
+    return f;
 }
 
-// Operador de salida
-std::ostream& operator<<(std::ostream& out, const Fixed& fixed) {
-    out << fixed.toFloat();
-    return out;
+std::ostream& operator<<(std::ostream& os, const Fixed& obj)
+{
+    float f = obj.toFloat();
+    std::cout << MAGENTA << "[operator<<] " << RESET
+              << "Printing object at [" << &obj << "], toFloat=" << f << std::endl;
+    os << f;
+    return os;
 }
