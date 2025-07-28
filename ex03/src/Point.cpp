@@ -6,7 +6,7 @@
 /*   By: sergio <sergio@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 21:17:51 by sergio            #+#    #+#             */
-/*   Updated: 2025/07/28 09:41:37 by sergio           ###   ########.fr       */
+/*   Updated: 2025/07/28 10:35:42 by sergio           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Point::Point() : _x(0), _y(0) {}
 
-Point::Point(const float x, const float y) : _x(x), _y(y) {}
+Point::Point(const float x, const float y) : _x(x), _y(y)  {}
 
 Point::Point(const Point& other) : _x(other._x), _y(other._y) {}
 
