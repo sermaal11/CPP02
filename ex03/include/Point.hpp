@@ -6,7 +6,7 @@
 /*   By: sergio <sergio@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 21:18:00 by sergio            #+#    #+#             */
-/*   Updated: 2025/07/22 23:58:41 by sergio           ###   ########.fr       */
+/*   Updated: 2025/07/28 09:40:41 by sergio           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,21 @@
 #include <cmath>
 #include "../include/Fixed.hpp"
 
-class Point {
-private:
-	const Fixed _x;
-	const Fixed _y;
+class Point
+{
+	private:
+		Fixed const _x;
+		Fixed const _y;
 
-public:
-	Point(); // (0, 0)
-	Point(const float x, const float y);
-	Point(const Point& other);
-	Point& operator=(const Point& other); // no cambia nada
-	~Point();
+	public:
+		Point();
+		Point(const float x, const float y);
+		Point(const Point& other);
+		Point& operator=(const Point& other);
+		~Point();
 
-	Fixed getX() const;
-	Fixed getY() const;
+		const Fixed& getX() const;
+		const Fixed& getY() const;
 };
 
 #endif // POINT_HPP
