@@ -6,7 +6,7 @@
 /*   By: sergio <sergio@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 21:17:46 by sergio            #+#    #+#             */
-/*   Updated: 2025/07/28 10:46:14 by sergio           ###   ########.fr       */
+/*   Updated: 2025/07/28 10:50:29 by sergio           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,18 @@ static void drawTriangle(Point const& a, Point const& b, Point const& c, Point c
     }
 }
 
+static void testCase(const char* title, Point const& a, Point const& b, Point const& c, Point const& p)
+{
+    std::cout << "\n--- " << title << " ---\n";
+    drawTriangle(a, b, c, p);
+
+    bool inside = bsp(a, b, c, p);
+    if (inside)
+        std::cout << GREEN << "Dentro\n" << RESET;
+    else
+        std::cout << RED << "Fuera\n" << RESET;
+}
+
 int main()
 {
     Point a(2, 2);
@@ -58,17 +70,9 @@ int main()
     Point outside(16, 5);
     Point edge(8, 2);
 
-    std::cout << "\n--- Caso: Punto dentro ---\n";
-    drawTriangle(a, b, c, inside);
-    std::cout << (bsp(a, b, c, inside) ? "✅ Dentro\n" : "❌ Fuera\n");
-
-    std::cout << "\n--- Caso: Punto fuera ---\n";
-    drawTriangle(a, b, c, outside);
-    std::cout << (bsp(a, b, c, outside) ? "✅ Dentro\n" : "❌ Fuera\n");
-
-    std::cout << "\n--- Caso: Punto en el borde ---\n";
-    drawTriangle(a, b, c, edge);
-    std::cout << (bsp(a, b, c, edge) ? "✅ Dentro\n" : "❌ Fuera\n");
+    testCase("Caso: Punto dentro", a, b, c, inside);
+    testCase("Caso: Punto fuera", a, b, c, outside);
+    testCase("Caso: Punto en el borde", a, b, c, edge);
 
     return 0;
 }
